@@ -1,13 +1,12 @@
 #!/usr/bin/python3
+# linedump.py
 
-# Default character format:
-# _ => Undefined: Placeholder
-# . => Good: Host is up to date
-# ! => Bad: Host is outdated
-# ? => Unknown: Host cannot be analysed
-# ¿ => Unreachable: Host cannot be reached
+# Linedump is a format for visualising monitoring information as a line of chars.
+# It is designed to be easy to parse for both humans and machines.
+# It can be used for simple shell programs, interactive CLI applications or in logs.
 
 # Default linedump format:
+#
 # - A linedump is a string with a predetermined number of chars
 # - New linedumps are made up of placeholder chars for "undefined"
 # - Each char represents a state
@@ -17,13 +16,14 @@
 # - Key can be invoked to get details about the state described by char
 # - Keys are ASCII printable characters, 33 to 126 (93 total)
 
-# def newlength(length=False):
-#     """Set or return length of linedump, an integer."""
-#     if not length: length = 1
-#     def l():
-#         nonlocal length
-#         return length
-#     return l
+# Default character format:
+#
+# _ => Undefined: Placeholder
+# . => Good: Host is up to date
+# ! => Bad: Host is outdated
+# ? => Unknown: Host cannot be analysed
+# ¿ => Unreachable: Host cannot be reached
+
 
 def keypos(x):
     "Multimethod for resolving key to pos or pos to key."""
@@ -40,8 +40,9 @@ def linedumpkeys(linedump):
     return "".join([keypos(x) for x in range(len(linedump))])
 
 
-# Define a closure that stores the length of the linedump.
-def newlength(length=1): return lambda: length
+def newlength(length=1):
+    """Define a closure that stores the length of the linedump."""
+    return lambda: length
 
 
 def newlinedump():
