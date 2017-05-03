@@ -63,7 +63,7 @@ def check(ip):
     dump(diagnosis(release(banner(ip))))
 
 def getips():
-     """Loads the IPs of hosts from a structured git repo of YAML files."""
+    """Loads the IPs of hosts from a structured git repo of YAML files."""
     servers = yamlrepo.loaddir()
     ips = (server['details']['ip'] for server in servers)
     return [cleanip(ip) for ip in ips if ip]

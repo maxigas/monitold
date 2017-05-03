@@ -24,15 +24,15 @@
 # ? => Unknown: Host cannot be analysed
 # ¿ => Unreachable: Host cannot be reached
 
+from functools import singledispatch
 
+@singledispatch
 def keypos(x):
-    "Multimethod for resolving key to pos or pos to key."""
-    # DEBUG:
-    # print("Keypos:", x)
-    if isinstance(x, str) and len(x) is 1: return ord(x) - 33
-    elif isinstance(x, int): return chr(x + 33)
-    else: return False
+    """Translates linedump positions to ASCII characters, or vica versa."""
+    return False
 
+keypos.register(str, lambda x: ord(x) - 33)
+keypos.register(int, lambda x: chr(x) + 33)
 
 def linedumpkeys(linedump):
     """Expects a linedump string and returns a string of corresponding keys"""
