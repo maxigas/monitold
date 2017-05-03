@@ -60,9 +60,12 @@ def newlinedump():
             else: char = "?"
         # Replace character at pos in chars with char:
         chars = chars[0:pos] + char + chars[pos+1:]
-        # Debug:
-        print("DEBUG:", chars)
+        # DEBUG:
+        print("DUMP:", chars)
         # If there are no placeholders left, print linedump:
-        if not "_" in chars: print(chars); print(linedumpkeys(chars))
+        if not "_" in chars:
+            print(chars)
+            print("-" * len(chars))
+            print(linedumpkeys(chars))
 
     return linedump
