@@ -22,8 +22,9 @@
 # . => Good: Host is up to date
 # ! => Bad: Host is outdated
 # ? => Unknown: Host cannot be analysed
-# ¿ => Unreachable: Host cannot be reached
+# x => Unreachable: Host cannot be reached
 
+from collections import OrderedDict
 from functools import singledispatch
 
 @singledispatch
@@ -67,5 +68,24 @@ def newlinedump():
             print(chars)
             print("-" * len(chars))
             print(linedumpkeys(chars))
+            print(stats(chars))
 
     return linedump
+
+def stats(linedump):
+    """Accepts a linedump and returns and prints a count of different characters."""
+    count = OrderedDict()
+    count = {"TOTAL": 0, "UP to date": 0, "OUT of date": 0, "DOWN": 0, "UNKNOWN": 0}
+    for x in linedump:
+        count["TOTAL"] += 1
+        if x is ".":
+            count["UP to date"] += 1
+        elif x is "!":
+            count["OUT of date"] += 1
+        elif x is "x":
+            count["DOWN"] += 1
+        else:
+            count["UNKNOWN"] +=1
+    return count
+
+            

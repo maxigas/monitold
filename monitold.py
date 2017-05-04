@@ -1,8 +1,13 @@
 #!/usr/bin/python3
 
 from functools import reduce
+from os import system
 import paramiko
 import yamlrepo, linedump, config
+
+def ping(ip):
+    """Ping IP to see if it is reachable: Return True of False."""
+    return True if system("ping -q -c 1 " + ip) is 0 else False
 
 def isip(ip):
     """Accepts a string and returns a boolean specifying whether it is a valid IP."""
@@ -16,8 +21,8 @@ def cleanip(ip):
 def check(ip):
     """Checks host age and dumps the result to linedump."""
 
-    def banner(ip):
-        """Accepts an IP and tries to return an OpenSSH banner."""
+    def sniff_ssh_banner(ip):
+        """Accepts an IP, returns an OpenSSH banner or None"""
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
@@ -33,12 +38,13 @@ def check(ip):
                 ssh.close()
                 return banner
             except:
-                banner = None
                 ssh.close()
-                return banner
-            
-    def release(banner):
+                return None
+
+    def fingerprint_debian_release(banner):
         """Accepts a banner and tries fingerprinting based on the config file."""
+        # DEBUG
+        print("Banner:", banner)
         if isinstance(banner, str):
             for x in config.banners:
                 # DEBUG: 
@@ -47,20 +53,24 @@ def check(ip):
                     # DEBUG:
                     print("Release:", x['release'])
                     return x['release']
+            return None
         else:
-            return banner
+            return None
 
-    def diagnosis(release):
+    def prepare_diagnosis(release):
         """Accepts a release number or status and returns the age of the host.
-           The age is either True for young; False for old; and None for unknown."""
+           * The age is either True for young; False for old.
+           * If the release number is not a number, it pings the host.
+           * If the host if up it returns "x", if the host is up None."""
         if isinstance(release, int):
             return release >= config.minimum_debian
         else:
-            return release
+            return None if ping(ip) else "x"
 
     assert isip(ip)
     print("Checking", ip)
-    dump(diagnosis(release(banner(ip))))
+    dump(prepare_diagnosis(fingerprint_debian_release(sniff_ssh_banner(ip))))
+
 
 def getips():
     """Loads the IPs of hosts from a structured git repo of YAML files."""
