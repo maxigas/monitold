@@ -32,7 +32,7 @@ def keypos(x):
     return False
 
 keypos.register(str, lambda x: ord(x) - 33)
-keypos.register(int, lambda x: chr(x) + 33)
+keypos.register(int, lambda x: chr(x + 33))
 
 def linedumpkeys(linedump):
     """Expects a linedump string and returns a string of corresponding keys"""
