@@ -50,8 +50,17 @@ def newlinedump():
     """Gather characters and if all are set, print them on a line."""
     chars = "_"*length()
     
-    def linedump(char, pos=False):
+    def linedump(char=None, pos=False):
         nonlocal chars
+        # If there are no placeholders left, print linedump:
+        if not "_" in chars:
+            print(chars)
+            with open('linedump.cache', 'w') as f:
+                print(chars, file=f, end='')
+            print("-" * len(chars))
+            print(linedumpkeys(chars))
+            print(stats(chars))
+            return chars
         # If position is not supplied then take the first placeholder's:
         pos = pos if pos else chars.find("_")
         # If abstract values are supplied, turn them into canonical chars:
@@ -62,13 +71,7 @@ def newlinedump():
         # Replace character at pos in chars with char:
         chars = chars[0:pos] + char + chars[pos+1:]
         # DEBUG:
-        print("DUMP:", chars)
-        # If there are no placeholders left, print linedump:
-        if not "_" in chars:
-            print(chars)
-            print("-" * len(chars))
-            print(linedumpkeys(chars))
-            print(stats(chars))
+        # print("DUMP:", chars)
 
     return linedump
 

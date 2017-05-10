@@ -2,6 +2,7 @@
 
 from functools import reduce
 from os import system
+from os import path
 import paramiko
 import yamlrepo, linedump, config
 
@@ -79,11 +80,34 @@ def getips():
     return [cleanip(ip) for ip in ips if ip]
 
 
+def interactive(chars):
+    """Accepts and prints a linedump, waits for commands, calls commands and then itself."""
+    print()
+    print("Type a printable ASCII char to see details or Enter to quit:")
+    key = input('> ')
+    print()
+    if len(key) is 0:
+        exit(0)
+    else:
+        print(yamlrepo.yaml.dump(yamlrepo.loaddir()[linedump.keypos(key)]))
+    dump(chars)
+    return interactive(chars)
+
+
 if __name__ == "__main__":
     # INIT
-    ips = getips()
-    linedump.length = linedump.newlength(len(ips))
-    dump = linedump.newlinedump()
-    # ACTION
-    for ip in ips:
-        check(ip)
+    if path.exists('linedump.cache'):
+        with open('linedump.cache') as f:
+            chars = f.read()
+        linedump.length = linedump.newlength(len(chars))
+        dump = linedump.newlinedump()
+        for x in chars:
+            dump(x)
+    else:
+        ips = getips()
+        linedump.length = linedump.newlength(len(ips))
+        dump = linedump.newlinedump()
+        for ip in ips:
+            check(ip)
+    interactive(dump())
+
